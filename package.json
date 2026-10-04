@@ -1,0 +1,8 @@
+{
+  "name": "graylog-message-trace",
+  "version": "0.1.0-dev",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --test", "serve": "python3 -m http.server 8080 --directory web" },
+  "engines": { "node": ">=22" }
+}

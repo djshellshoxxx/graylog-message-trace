@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "message": { "id": "synthetic-example", "index": "network_example", "fields": { "message": "mstpd: lan5 Flushing forwarding database", "stp_port": "lan5" } },
+  "replay_input": "FINAL_DOCUMENT",
+  "capture": { "complete": false },
+  "steps": [
+    { "label": "Stored input ID: example-input", "provenance": "OBSERVED" },
+    { "label": "Current input configuration: HP Network Syslog", "provenance": "RECONSTRUCTED" },
+    { "label": "parse_mstpd — illustrative replay", "provenance": "CURRENT_REPLAY", "duration_us": 31, "before": { "message": "mstpd: lan5 Flushing forwarding database" }, "after": { "message": "mstpd: lan5 Flushing forwarding database", "stp_port": "lan5" } },
+    { "label": "Physical index: network_example", "provenance": "OBSERVED" },
+    { "label": "Contribution to an event: not established", "provenance": "UNKNOWN" }
+  ]
+}

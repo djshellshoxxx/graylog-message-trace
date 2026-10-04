@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Message Trace — development viewer</title><link rel="stylesheet" href="style.css"></head>
+<body><main>
+<header><p>GRAYLOG MESSAGE TRACE · DEVELOPMENT VIEWER</p><h1>Follow the evidence.</h1>
+<p>Inspect a trace JSON file locally. Files stay in this browser. This viewer is not connected to Graylog.</p></header>
+<section class="controls"><label>Open trace JSON <input id="file" type="file" accept=".json,application/json"></label>
+<button id="demo">Load illustrative trace</button><button id="export" disabled>Export JSON</button></section>
+<p id="error" role="alert"></p><p id="status" aria-live="polite">Choose a file or load the example.</p>
+<section><h2>Exact recording</h2><p>OFF · Unavailable in this standalone viewer. Live instrumentation is not implemented.</p></section>
+<div id="trace" hidden><h2 id="identity"></h2><p id="summary"></p>
+<section><h2>Processing flow</h2><ol id="flow"></ol></section>
+<section><h2>Final fields</h2><p>Select a field to inspect its recorded or replayed changes.</p><div id="fields"></div><div id="history" aria-live="polite"></div></section>
+<section><h2>Diagnostics</h2><ul id="diagnostics"></ul></section></div>
+</main><script type="module" src="app.js"></script></body></html>
