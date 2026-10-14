@@ -15,6 +15,18 @@
 - Converts the response into a stored-facts-only trace compatible with the existing viewer. This is not a native Graylog plugin.
 - Integration tests against an authorized Graylog 7.1.3 test instance, reverse-proxy deployment, and different account permissions remain outstanding.
 
+## Fully specified viewer enhancements (not yet implemented)
+
+See [feature specification index](features/README.md), including the shared typed evidence contract, independent module ownership and test plans. The five viewer enhancements are:
+
+1. Processing Flow Filters — typed step predicates and presets, with evidence and ordering preserved.
+2. Smart Trace Search — bounded literal search over the already-authorized trace, with safe navigation.
+3. Evidence Coverage — conservative explicit recorded/stored/replay/unknown status without invented scores.
+4. Visual Field Journey — typed per-field creation/modification/removal and missing-boundary markers.
+5. Markdown Investigation Export — opt-in values, provenance-aware report and safe Markdown escaping.
+
+Implement against the existing dependency-free viewer first, then mount the same modules in the pinned native Graylog plugin. Native and exact-recording work must pass independent staging gates.
+
 ## Next: native read-only integration
 
 1. Inspect official plugin skeleton and pin server/web build versions.
