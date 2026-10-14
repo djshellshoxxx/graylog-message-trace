@@ -3,6 +3,12 @@
   "version": "0.1.0-dev",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test", "serve": "python3 -m http.server 8080 --directory web" },
-  "engines": { "node": ">=22" }
+  "scripts": {
+    "test": "node --test",
+    "serve": "python3 -m http.server 8080 --directory web",
+    "check:syntax": "node --check web/app.js && node --check web/trace.js && node --check lib/graylog-api.js && node --check lib/graylog-auth.js && node --check tools/trace-message.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }
