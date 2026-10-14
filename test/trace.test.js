@@ -90,3 +90,11 @@ test('validator rejects non-JSON cyclic evidence', () => {
   trace.message.fields.cycle = loop;
   assert.throws(() => validateTrace(trace), /cyclic|reference/i);
 });
+
+test('validator preserves null values in imported JSON evidence', () => {
+  const trace = fixture();
+  trace.message.fields.optional = null;
+  trace.steps = [{ label: 'create', provenance: 'RECORDED',
+    before: {}, after: { optional: null } }];
+  assert.equal(validateTrace(trace).message.fields.optional, null);
+});
