@@ -44,5 +44,6 @@ Only the stored final document, physical index, and available persisted metadata
 - [Engineering specification v1.2](docs/SPECIFICATION.md)
 - [Graylog 7.1.3 integration research](docs/RESEARCH.md)
 - [Implementation status and next steps](docs/ROADMAP.md)
+- [Code and feature audit (2026-10-13)](docs/AUDIT-2026-10-13.md)
 
 Never represent reconstruction as recording. A configuration snapshot alone does not recover the original input, lookup responses, processor state, or actual execution.
