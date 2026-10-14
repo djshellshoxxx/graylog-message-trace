@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { writeFile } from 'node:fs/promises';
 import { fetchGraylogTrace } from '../lib/graylog-api.js';
+import { credentialsFromEnv } from '../lib/graylog-auth.js';
 
 function argumentsFrom(argv) {
   const values = {};
@@ -21,7 +22,7 @@ function argumentsFrom(argv) {
 
 const usage = `Read one authorized Graylog message and export stored evidence (no replay).
 Usage: node tools/trace-message.mjs --url https://graylog.example/api --index INDEX --id MESSAGE_ID [--out trace.json] [--allow-http]
-Credentials must be supplied via GRAYLOG_USER and GRAYLOG_PASSWORD (or GRAYLOG_TOKEN as the password).
+Credentials: GRAYLOG_TOKEN (preferred), or GRAYLOG_USER plus GRAYLOG_PASSWORD.
 --allow-http is only for explicitly authorized HTTP endpoints on trusted networks.
 Without --out, JSON goes to stdout. Existing output files are never overwritten.`;
 
@@ -33,10 +34,10 @@ try {
   }
   if (!opts['--url'] || !opts['--index'] || !opts['--id'])
     throw new Error('Provide --url, --index and --id. Use --help for usage.');
+  const credentials = credentialsFromEnv(process.env);
   const trace = await fetchGraylogTrace({
     baseUrl: opts['--url'], index: opts['--index'], id: opts['--id'],
-    username: process.env.GRAYLOG_USER,
-    password: process.env.GRAYLOG_PASSWORD ?? process.env.GRAYLOG_TOKEN,
+    ...credentials,
     allowHttp: Boolean(opts['--allow-http'])
   });
   const json = JSON.stringify(trace, null, 2) + '\n';
