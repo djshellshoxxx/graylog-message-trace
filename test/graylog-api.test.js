@@ -75,3 +75,19 @@ test('rejects unexpectedly large responses with an enforced byte limit', async (
     fetchImpl: async () => new Response(huge, { status: 200 })
   }), /size limit/i);
 });
+
+test('rejects a mismatched wrapper ID even if stored field map has no ID', () => {
+  assert.throws(() => normalizeMessage({
+    index: 'graylog_42',
+    message: { id: 'different', fields: { message: 'hello' } }
+  }, 'graylog_42', 'abc-123'), /differs/);
+});
+
+test('supports the field-map shape returned by Graylog Message getters', () => {
+  const trace = normalizeMessage({
+    index: 'graylog_42',
+    message: { id: 'abc-123', fields: { message: 'hello', count: 7 } }
+  }, 'graylog_42', 'abc-123');
+  assert.equal(trace.message.fields.count, 7);
+  assert.equal(trace.message.fields.message, 'hello');
+});
