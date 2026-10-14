@@ -1,5 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { buildMessageUrl, normalizeMessage, fetchGraylogTrace } from '../lib/graylog-api.js';
 
 const message = { index: 'graylog_42', message: { id: 'abc-123', message: 'hello', gl2_source_input: 'input-1', streams: ['stream-a'], count: 7 } };
@@ -90,4 +92,14 @@ test('supports the field-map shape returned by Graylog Message getters', () => {
   }, 'graylog_42', 'abc-123');
   assert.equal(trace.message.fields.count, 7);
   assert.equal(trace.message.fields.message, 'hello');
+});
+
+test('CLI offers a documented help path without requiring credentials', () => {
+  const cli = fileURLToPath(new URL('../tools/trace-message.mjs', import.meta.url));
+  const help = spawnSync(process.execPath, [cli, '--help'], { encoding: 'utf8', env: {} });
+  assert.equal(help.status, 0, help.stderr);
+  assert.match(help.stdout, /--index INDEX --id MESSAGE_ID/);
+  const missing = spawnSync(process.execPath, [cli], { encoding: 'utf8', env: {} });
+  assert.equal(missing.status, 1);
+  assert.match(missing.stderr, /Provide --url, --index and --id/);
 });
