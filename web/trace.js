@@ -37,9 +37,15 @@ export function fieldDiff(before, after) {
 }
 
 export function fieldHistory(trace, field) {
-  return trace.steps.flatMap((step, sequence) => step.before === undefined ? [] :
-    fieldDiff(step.before, step.after).filter(change => change.field === field)
-      .map(change => ({ ...change, sequence, label: step.label, provenance: step.provenance })));
+  // Compute only the requested field: a trace can contain thousands of unrelated
+  // fields, and re-diffing all of them for each selection is unnecessarily costly.
+  return trace.steps.flatMap((step, sequence) => {
+    if (step.before === undefined) return [];
+    const before = Object.hasOwn(step.before, field) ? { [field]: step.before[field] } : {};
+    const after = Object.hasOwn(step.after, field) ? { [field]: step.after[field] } : {};
+    return fieldDiff(before, after)
+      .map(change => ({ ...change, sequence, label: step.label, provenance: step.provenance }));
+  });
 }
 
 export function traceSummary(trace) {
