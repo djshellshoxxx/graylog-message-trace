@@ -54,3 +54,47 @@ test('inferred steps prevent a complete-recording summary', () => {
   t.steps = [{ label: 'rule', provenance: 'RECORDED' }, { label: 'input', provenance: 'INFERRED' }];
   assert.match(traceSummary(t), /Partial/);
 });
+
+test('field-history lookup does not scan unrelated nested fields', () => {
+  const unrelated = () => new Proxy({}, {
+    ownKeys() { throw new Error('Unrelated nested field was inspected'); }
+  });
+  const t = fixture();
+  t.steps = [{ label: 'change', provenance: 'RECORDED',
+    before: { selected: 1, unrelated: unrelated() },
+    after: { selected: 2, unrelated: unrelated() }
+  }];
+  assert.deepEqual(fieldHistory(t, 'selected').map(change => [change.field, change.kind]),
+    [['selected', 'MODIFIED']]);
+});
+
+test('field-history lookup retains prototype-shaped field names', () => {
+  const t = fixture();
+  t.steps = [{ label: 'field', provenance: 'RECORDED',
+    before: {}, after: JSON.parse('{"__proto__":null}') }];
+  assert.equal(fieldHistory(t, '__proto__')[0].kind, 'CREATED');
+});
+
+test('validator rejects deeply nested evidence before diff or rendering can overflow', () => {
+  const trace = fixture();
+  let value = 'leaf';
+  for (let i = 0; i < 150; i++) value = { child: value };
+  trace.message.fields.deep = value;
+  assert.throws(() => validateTrace(trace), /nesting limit/i);
+});
+
+test('validator rejects non-JSON cyclic evidence', () => {
+  const trace = fixture();
+  const loop = {};
+  loop.self = loop;
+  trace.message.fields.cycle = loop;
+  assert.throws(() => validateTrace(trace), /cyclic|reference/i);
+});
+
+test('validator preserves null values in imported JSON evidence', () => {
+  const trace = fixture();
+  trace.message.fields.optional = null;
+  trace.steps = [{ label: 'create', provenance: 'RECORDED',
+    before: {}, after: { optional: null } }];
+  assert.equal(validateTrace(trace).message.fields.optional, null);
+});

@@ -2,6 +2,33 @@ export const PROVENANCE = Object.freeze(['OBSERVED', 'RECORDED', 'HISTORICAL_REP
 const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const text = x => typeof x === 'string' && x.trim().length > 0;
 
+// Traversal is iterative so even deliberately deep inputs fail with a useful
+// validation error rather than a stack overflow in structuredClone or fieldDiff.
+function checkEvidenceLimits(root) {
+  const active = new WeakSet();
+  const pending = [{ value: root, depth: 0, exit: false }];
+  let visited = 0;
+  while (pending.length) {
+    const entry = pending.pop();
+    const value = entry.value;
+    if (entry.exit) { active.delete(value); continue; }
+    if (++visited > 250000) throw new Error('Trace data exceeds node limit.');
+    if (value === null) continue;
+    if (typeof value !== 'object') {
+      if (!['string', 'number', 'boolean'].includes(typeof value) ||
+          (typeof value === 'number' && !Number.isFinite(value)))
+        throw new Error('Trace data contains a non-JSON value.');
+      continue;
+    }
+    if (entry.depth > 64) throw new Error('Trace data exceeds nesting limit.');
+    if (active.has(value)) throw new Error('Trace data contains cyclic references.');
+    active.add(value);
+    pending.push({ value, exit: true });
+    for (const child of Object.values(value))
+      pending.push({ value: child, depth: entry.depth + 1, exit: false });
+  }
+}
+
 // Validate imported evidence; a local import cannot authenticate its origin.
 export function validateTrace(value) {
   if (!object(value) || value.schema_version !== 1) throw new Error('Expected trace schema_version 1.');
@@ -15,6 +42,7 @@ export function validateTrace(value) {
     if (step.after !== undefined && !object(step.after)) throw new Error('After fields must be an object.');
     if ((step.before === undefined) !== (step.after === undefined)) throw new Error('Field changes require both before and after snapshots.');
   }
+  checkEvidenceLimits(value);
   return structuredClone(value);
 }
 
@@ -37,9 +65,15 @@ export function fieldDiff(before, after) {
 }
 
 export function fieldHistory(trace, field) {
-  return trace.steps.flatMap((step, sequence) => step.before === undefined ? [] :
-    fieldDiff(step.before, step.after).filter(change => change.field === field)
-      .map(change => ({ ...change, sequence, label: step.label, provenance: step.provenance })));
+  // Compute only the requested field: a trace can contain thousands of unrelated
+  // fields, and re-diffing all of them for each selection is unnecessarily costly.
+  return trace.steps.flatMap((step, sequence) => {
+    if (step.before === undefined) return [];
+    const before = Object.hasOwn(step.before, field) ? { [field]: step.before[field] } : {};
+    const after = Object.hasOwn(step.after, field) ? { [field]: step.after[field] } : {};
+    return fieldDiff(before, after)
+      .map(change => ({ ...change, sequence, label: step.label, provenance: step.provenance }));
+  });
 }
 
 export function traceSummary(trace) {
