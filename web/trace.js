@@ -13,7 +13,8 @@ function checkEvidenceLimits(root) {
     const value = entry.value;
     if (entry.exit) { active.delete(value); continue; }
     if (++visited > 250000) throw new Error('Trace data exceeds node limit.');
-    if (value === null || typeof value !== 'object') {
+    if (value === null) continue;
+    if (typeof value !== 'object') {
       if (!['string', 'number', 'boolean'].includes(typeof value) ||
           (typeof value === 'number' && !Number.isFinite(value)))
         throw new Error('Trace data contains a non-JSON value.');
