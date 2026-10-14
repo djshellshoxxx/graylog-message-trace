@@ -54,3 +54,23 @@ test('inferred steps prevent a complete-recording summary', () => {
   t.steps = [{ label: 'rule', provenance: 'RECORDED' }, { label: 'input', provenance: 'INFERRED' }];
   assert.match(traceSummary(t), /Partial/);
 });
+
+test('field-history lookup does not scan unrelated nested fields', () => {
+  const unrelated = () => new Proxy({}, {
+    ownKeys() { throw new Error('Unrelated nested field was inspected'); }
+  });
+  const t = fixture();
+  t.steps = [{ label: 'change', provenance: 'RECORDED',
+    before: { selected: 1, unrelated: unrelated() },
+    after: { selected: 2, unrelated: unrelated() }
+  }];
+  assert.deepEqual(fieldHistory(t, 'selected').map(change => [change.field, change.kind]),
+    [['selected', 'MODIFIED']]);
+});
+
+test('field-history lookup retains prototype-shaped field names', () => {
+  const t = fixture();
+  t.steps = [{ label: 'field', provenance: 'RECORDED',
+    before: {}, after: JSON.parse('{"__proto__":null}') }];
+  assert.equal(fieldHistory(t, '__proto__')[0].kind, 'CREATED');
+});
