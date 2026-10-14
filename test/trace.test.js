@@ -74,3 +74,19 @@ test('field-history lookup retains prototype-shaped field names', () => {
     before: {}, after: JSON.parse('{"__proto__":null}') }];
   assert.equal(fieldHistory(t, '__proto__')[0].kind, 'CREATED');
 });
+
+test('validator rejects deeply nested evidence before diff or rendering can overflow', () => {
+  const trace = fixture();
+  let value = 'leaf';
+  for (let i = 0; i < 150; i++) value = { child: value };
+  trace.message.fields.deep = value;
+  assert.throws(() => validateTrace(trace), /nesting limit/i);
+});
+
+test('validator rejects non-JSON cyclic evidence', () => {
+  const trace = fixture();
+  const loop = {};
+  loop.self = loop;
+  trace.message.fields.cycle = loop;
+  assert.throws(() => validateTrace(trace), /cyclic|reference/i);
+});
