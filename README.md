@@ -39,6 +39,10 @@ For password-based authentication, unset `GRAYLOG_TOKEN` and set both `GRAYLOG_U
 
 Only the stored final document, physical index, and available persisted metadata are labeled `OBSERVED`. A stored input ID does not establish its historical configuration, and stored streams do not establish routing sequence. This adapter **does not** determine which pipelines or rules originally executed. HTTP failures are reported without printing server response bodies.
 
+## Implementation-ready feature specifications
+
+The [modular feature specification index](docs/features/README.md) contains complete developer-ready contracts for the core native integration and five selected standalone-viewer enhancements: Processing Flow Filters, Smart Trace Search, Evidence Coverage, Visual Field Journey, and Markdown Investigation Export. These are **specifications only**, not implemented features. They include UI controls, data types, module ownership, security boundaries, test cases, acceptance gates, and implementation order.
+
 ## Documentation
 
 - [Engineering specification v1.2](docs/SPECIFICATION.md)
