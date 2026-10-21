@@ -51,3 +51,11 @@ The [modular feature specification index](docs/features/README.md) contains comp
 - [Code and feature audit (2026-10-13)](docs/AUDIT-2026-10-13.md)
 
 Never represent reconstruction as recording. A configuration snapshot alone does not recover the original input, lookup responses, processor state, or actual execution.
+
+## Verified test status
+
+`npm test` ran 28 tests on this snapshot: 28 passed, 0 failed (Node.js test runner).
+
+## Wiki
+
+Wiki source pages are in [docs/wiki/](docs/wiki/Home.md): developer guide, architecture summary and codebase map. `docs/SPECIFICATION.md` and `docs/features/` remain the authority.
