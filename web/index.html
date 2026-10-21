@@ -5,11 +5,14 @@
 <header><p>GRAYLOG MESSAGE TRACE · DEVELOPMENT VIEWER</p><h1>Follow the evidence.</h1>
 <p>Inspect a trace JSON file locally. Files stay in this browser. This viewer is not connected to Graylog.</p></header>
 <section class="controls"><label>Open trace JSON <input id="file" type="file" accept=".json,application/json"></label>
-<button id="demo">Load illustrative trace</button><button id="export" disabled>Export JSON</button></section>
+<button id="demo">Load illustrative trace</button><button id="export" disabled>Export JSON</button><button id="export-md" disabled>Export Markdown</button><label><input type="checkbox" id="md-values"> include field values</label></section>
+<section id="lookup" hidden><h2>Live lookup</h2><form id="lookup-form"><label>Index <input id="l-index" required maxlength="128"></label> <label>Message ID <input id="l-id" required maxlength="256"></label> <button>Fetch from Graylog</button></form><p>Read-only; credentials stay on the local server.</p></section>
 <p id="error" role="alert"></p><p id="status" aria-live="polite">Choose a file or load the example.</p>
 <section><h2>Exact recording</h2><p>OFF · Unavailable in this standalone viewer. Live instrumentation is not implemented.</p></section>
 <div id="trace" hidden><h2 id="identity"></h2><p id="summary"></p>
-<section><h2>Processing flow</h2><ol id="flow"></ol></section>
+<section><h2>Search</h2><label>Find in trace <input id="q" type="search" maxlength="256"></label> <button id="prev">Prev</button><button id="next">Next</button> <span id="q-count" aria-live="polite"></span></section>
+<section><h2>Evidence coverage</h2><ul id="coverage"></ul></section>
+<section><h2>Processing flow</h2><div class="filters"><label>Preset <select id="preset"></select></label> <label>Outcome <select id="f-outcome"></select></label> <label>Provenance <select id="f-prov"></select></label> <label><input type="checkbox" id="f-changed"> Only changed fields</label> <label>Min duration µs <input id="f-duration" inputmode="numeric" size="8"></label> <button id="f-clear">Clear filters</button></div><p id="f-error" role="alert"></p><p id="f-count" aria-live="polite"></p><ol id="flow"></ol></section>
 <section><h2>Final fields</h2><p>Select a field to inspect its recorded or replayed changes.</p><div id="fields"></div><div id="history" aria-live="polite"></div></section>
 <section><h2>Diagnostics</h2><ul id="diagnostics"></ul></section></div>
 </main><script type="module" src="app.js"></script></body></html>

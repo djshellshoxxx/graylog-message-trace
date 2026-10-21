@@ -1,0 +1,60 @@
+name: Release builds
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, target: linux-x64, ext: '' }
+          - { os: windows-latest, target: windows-x64, ext: '.exe' }
+          - { os: macos-latest, target: macos-arm64, ext: '' }
+          - { os: macos-13, target: macos-x64, ext: '' }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: npm install --no-audit --no-fund
+      - run: npm test
+      - run: node scripts/build.mjs --target ${{ matrix.target }}
+      - name: Smoke test binary
+        shell: bash
+        run: |
+          bin="dist/graylog-trace-${{ matrix.target }}${{ matrix.ext }}"
+          [ "$("$bin" --version)" = "$(node -p "require('./package.json').version")" ]
+          "$bin" serve --port 18089 & pid=$!
+          sleep 2
+          curl -fsS http://localhost:18089/health | grep '"ok":true'
+          kill $pid
+      - name: Package
+        shell: bash
+        run: |
+          cd dist
+          f="graylog-trace-${{ matrix.target }}${{ matrix.ext }}"
+          if [ "${{ runner.os }}" = "Windows" ]; then 7z a "../graylog-trace-${{ matrix.target }}.zip" "$f"; else tar czf "../graylog-trace-${{ matrix.target }}.tar.gz" "$f"; fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: graylog-trace-${{ matrix.target }}.*
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: out, merge-multiple: true }
+      - name: Checksums and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          cd out && sha256sum * > SHA256SUMS.txt
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "Message Trace $TAG" --generate-notes --prerelease * || \
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber *

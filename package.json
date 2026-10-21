@@ -1,14 +1,22 @@
 {
   "name": "graylog-message-trace",
-  "version": "0.1.0-dev",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "serve": "python3 -m http.server 8080 --directory web",
-    "check:syntax": "node --check web/app.js && node --check web/trace.js && node --check lib/graylog-api.js && node --check lib/graylog-auth.js && node --check tools/trace-message.mjs"
+    "serve": "node tools/graylog-trace.mjs serve",
+    "check:syntax": "for f in web/*.js web/features/*.js lib/*.js tools/*.mjs scripts/*.mjs; do node --check \"$f\" || exit 1; done",
+    "build": "node scripts/build.mjs"
   },
   "engines": {
     "node": ">=22"
+  },
+  "bin": {
+    "graylog-trace": "tools/graylog-trace.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "postject": "1.0.0-alpha.6"
   }
 }
