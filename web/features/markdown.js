@@ -44,16 +44,14 @@ function isInvisible(cp) {
 // backslash-escaped, which disables emphasis, links, autolinks (http://, www., @),
 // HTML and entities; control and bidi characters become visible \uXXXX text.
 export function escapeText(value) {
-  let out = '';
-  for (const ch of String(value)) {
+  // Keep runs of ordinary text intact when exporting large field histories.
+  return String(value).replace(/[^\p{L}\p{N} ]/gu, (ch) => {
     const cp = ch.codePointAt(0);
-    if (CONTROL_SHORT.has(ch)) out += CONTROL_SHORT.get(ch);
-    else if (cp >= 0xd800 && cp <= 0xdfff) out += `\\\\u${hex4(cp)}`; // lone surrogate
-    else if (isInvisible(cp)) out += `\\\\u${hex4(cp)}`;
-    else if (ASCII_PUNCTUATION.has(ch)) out += '\\' + ch;
-    else out += ch;
-  }
-  return out;
+    if (CONTROL_SHORT.has(ch)) return CONTROL_SHORT.get(ch);
+    if ((cp >= 0xd800 && cp <= 0xdfff) || isInvisible(cp)) return `\\\\u${hex4(cp)}`;
+    if (ASCII_PUNCTUATION.has(ch)) return '\\' + ch;
+    return ch;
+  });
 }
 
 // JSON-quoted preview of a value, cut at a code point boundary to MAX_VALUE_BYTES.

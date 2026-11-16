@@ -1,6 +1,6 @@
 # Message Trace implementation-ready feature specifications
 
-**Document set version 1.0 | October 13, 2026 | Target Graylog 7.1.3 (unverified plugin compatibility).** These are development specifications, not completed features. They preserve the existing product decisions in `docs/SPECIFICATION.md` v1.2; no native Graylog plugin or exact original-execution recorder exists yet.
+**Document set version 1.0 | October 13, 2026 | Target Graylog 7.1.3 (unverified plugin compatibility).** The status column identifies implementations available in the standalone viewer. They preserve the existing product decisions in `docs/SPECIFICATION.md` v1.2; no native Graylog plugin or exact original-execution recorder exists yet.
 
 ## Feature register and implementation status
 
@@ -8,11 +8,12 @@
 | --- | --- | --- | --- | --- | --- |
 | MT-000 | [Shared data contract](00-SHARED-CONTRACT.md) | Stable plugin/UI evidence semantics and module boundaries | Foundation | Specified | Existing schema v1 and tests |
 | MT-001 | [Native Graylog integration and execution proof](01-CORE-GRAYLOG-INTEGRATION.md) | Authorized message actions/topology; gated simulation and original recording | Core | Specified, not implemented | Official 7.1.3 sample, staging, module build |
-| MT-002 | [Processing Flow Filters](02-PROCESSING-FLOW-FILTERS.md) | Reduce noise while preserving source order/provenance | Standalone v0.1 | Specified, not implemented | MT-000 normalization |
-| MT-003 | [Smart Trace Search](03-SMART-TRACE-SEARCH.md) | Find field/rule/diagnostic evidence inside one trace | Standalone v0.1 | Specified, not implemented | MT-000; composes with MT-002 |
-| MT-004 | [Evidence Coverage](04-EVIDENCE-COVERAGE.md) | Show which boundaries are recorded, stored, replayed, unknown or redacted | Standalone v0.1 | Specified, not implemented | MT-000 trust context |
-| MT-005 | [Visual Field Journey](05-VISUAL-FIELD-JOURNEY.md) | Show typed creation/modification/removal over evidence steps | Standalone v0.1 | Specified, not implemented | Existing fieldHistory, MT-000 |
-| MT-006 | [Markdown Investigation Export](06-MARKDOWN-INVESTIGATION-EXPORT.md) | Readable per-message investigations for incident notes | Standalone v0.1 | Specified, not implemented | MT-000, MT-004, optionally MT-005 |
+| MT-002 | [Processing Flow Filters](02-PROCESSING-FLOW-FILTERS.md) | Reduce noise while preserving source order/provenance | Standalone v0.1 | Implemented in viewer | MT-000 normalization |
+| MT-003 | [Smart Trace Search](03-SMART-TRACE-SEARCH.md) | Find field/rule/diagnostic evidence inside one trace | Standalone v0.1 | Implemented in viewer | MT-000; composes with MT-002 |
+| MT-004 | [Evidence Coverage](04-EVIDENCE-COVERAGE.md) | Show which boundaries are recorded, stored, replayed, unknown or redacted | Standalone v0.1 | Implemented in viewer | MT-000 trust context |
+| MT-005 | [Visual Field Journey](05-VISUAL-FIELD-JOURNEY.md) | Show typed creation/modification/removal over evidence steps | Standalone v0.1 | Implemented in viewer | Existing fieldHistory, MT-000 |
+| MT-006 | [Markdown Investigation Export](06-MARKDOWN-INVESTIGATION-EXPORT.md) | Readable per-message investigations for incident notes | Standalone v0.1 | Implemented in viewer | MT-000, MT-004, optionally MT-005 |
+| MT-007 | [Packaging and live lookup](07-PACKAGING-AND-LIVE-LOOKUP.md) | Serve the viewer locally and fetch a stored message | Standalone v0.2 | Implemented in CLI and viewer | Node.js CLI and read-only Graylog API |
 
 **Not proposed as a new standalone feature:** Field Watchlist. Graylog has native Favorite Fields functionality in newer versions; adding a separate preference store would duplicate it. Keep compatibility fallback as a later interface decision, not a v0.1 task.
 
