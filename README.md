@@ -39,9 +39,21 @@ For password-based authentication, unset `GRAYLOG_TOKEN` and set both `GRAYLOG_U
 
 Only the stored final document, physical index, and available persisted metadata are labeled `OBSERVED`. A stored input ID does not establish its historical configuration, and stored streams do not establish routing sequence. This adapter **does not** determine which pipelines or rules originally executed. HTTP failures are reported without printing server response bodies.
 
+## Standalone app (v0.2)
+
+Download the executable for your OS from the Releases page (unsigned: macOS needs right-click Open, Windows SmartScreen will warn), or run from source with `npm run serve`.
+
+```sh
+graylog-trace serve --port 8080                      # viewer at http://localhost:8080 (loopback only)
+GRAYLOG_URL=https://graylog.example.org/api GRAYLOG_TOKEN=... graylog-trace serve   # enables in-viewer live lookup
+graylog-trace fetch --url ... --index INDEX --id MESSAGE_ID --out trace.json
+```
+
+The viewer includes flow filters, literal trace search, an evidence-coverage panel, per-field journeys and Markdown investigation export (field values opt-in). See [MT-007](docs/features/07-PACKAGING-AND-LIVE-LOOKUP.md).
+
 ## Implementation-ready feature specifications
 
-The [modular feature specification index](docs/features/README.md) contains complete developer-ready contracts for the core native integration and five selected standalone-viewer enhancements: Processing Flow Filters, Smart Trace Search, Evidence Coverage, Visual Field Journey, and Markdown Investigation Export. These are **specifications only**, not implemented features. They include UI controls, data types, module ownership, security boundaries, test cases, acceptance gates, and implementation order.
+The [modular feature specification index](docs/features/README.md) contains complete developer-ready contracts for the core native integration and five selected standalone-viewer enhancements: Processing Flow Filters, Smart Trace Search, Evidence Coverage, Visual Field Journey, and Markdown Investigation Export. MT-002 to MT-007 are implemented in the standalone viewer; the native plugin (MT-001) is not. They include UI controls, data types, module ownership, security boundaries, test cases, acceptance gates, and implementation order.
 
 ## Documentation
 
