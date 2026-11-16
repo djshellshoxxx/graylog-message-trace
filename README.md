@@ -13,7 +13,7 @@ Explain the path of a Graylog message while keeping stored facts, recorded execu
 
 ## Run
 
-Requires Node.js 22+ for tests and Python 3 for the development web server. There are no npm dependencies.
+Node.js 22 or later runs the tests, viewer, and CLI. Install the development dependencies with `npm ci` to build the standalone executable.
 
 ```sh
 npm test
@@ -41,7 +41,7 @@ Only the stored final document, physical index, and available persisted metadata
 
 ## Standalone app (v0.2)
 
-Download the executable for your OS from the Releases page (unsigned: macOS needs right-click Open, Windows SmartScreen will warn), or run from source with `npm run serve`.
+Run the viewer from source with `npm run serve`, or use the executable for your operating system when available on the Releases page.
 
 ```sh
 graylog-trace serve --port 8080                      # viewer at http://localhost:8080 (loopback only)
@@ -63,3 +63,7 @@ The [modular feature specification index](docs/features/README.md) contains comp
 - [Code and feature audit (2026-10-13)](docs/AUDIT-2026-10-13.md)
 
 Never represent reconstruction as recording. A configuration snapshot alone does not recover the original input, lookup responses, processor state, or actual execution.
+
+## Wiki
+
+Wiki source pages are in [docs/wiki/](docs/wiki/Home.md): developer guide, architecture summary and codebase map. `docs/SPECIFICATION.md` and `docs/features/` remain the authority.
